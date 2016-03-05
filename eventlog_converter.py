@@ -15,6 +15,11 @@ def get_headers_from_json(event, headers, prefix=""):
             headers.append(prefix + key)
         if isinstance(value, dict):
             get_headers_from_json(value, headers, prefix + key + ".")
+        elif isinstance(value, list):
+            for idx, item in enumerate(value):
+                if isinstance(item, dict):
+                    get_headers_from_json(item, headers,
+                                          prefix + key + "." + str(idx) + ".")
 
 
 def get_headers(file):
@@ -46,11 +51,11 @@ def main():
     args = parser.parse_args()
 
     if args.filename.rfind(".json") != len(args.filename) - len(".json"):
-        outFilename = args.filename + ".json"
+        outName = args.filename + ".json"
     else:
-        outFilename = args.filename[:len(args.filename) - len(".json")] + ".csv"
+        outName = args.filename[:len(args.filename) - len(".json")] + ".csv"
 
-    outfile = open(outFilename, "w")
+    outfile = open(outName, "w")
 
     with open(args.filename) as file:
         headers = get_headers(file)
