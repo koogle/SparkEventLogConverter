@@ -250,14 +250,19 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("filename", help="the filename of the Spark eventlog",
                         type=str)
+    parser.add_argument("outpath", help="the path for the output file",
+                        type=str)
+
     args = parser.parse_args()
+    filename = args.filename
 
-    if args.filename.rfind(".json") != len(args.filename) - len(".json"):
-        outName = args.filename
+    if filename.rfind(".json") != len(filename) - len(".json"):
+        outname = filename[filename.rfind("/")+1:]
     else:
-        outName = args.filename[:len(args.filename) - len(".json")]
+        outname = filename[filename.rfind("/")+1:
+                           len(filename) - len(".json")]
 
-    outfile = open(outName + ".csv", "w")
+    outfile = open(args.outpath + outname + ".csv", "w")
 
     with open(args.filename) as file:
         for line in file:
@@ -266,9 +271,12 @@ def main():
             outfile.write(csvLine + "\n")
         outfile.close()
 
-        write_dict(outName + "_stages_" + ".csv", Stage, Stage.stages)
-        write_dict(outName + "_jobs_" + ".csv", Job, Job.jobs)
-        write_dict(outName + "_tasks_" + ".csv", Task, Task.tasks)
+        write_dict(args.outpath + outname + "_stages_" + ".csv",
+                   Stage, Stage.stages)
+        write_dict(args.outpath + outname + "_jobs_" + ".csv",
+                   Job, Job.jobs)
+        write_dict(args.outpath + outname + "_tasks_" + ".csv",
+                   Task, Task.tasks)
 
 if __name__ == "__main__":
     main()
